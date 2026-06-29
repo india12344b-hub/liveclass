@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LiveClass – Priya Ma'am</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   LiveClass — Complete CSS
+   Mobile-first. Teacher UI. NOT a chatbot.
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --purple:      #7C3AED;
+  --purple-dark: #4C1D95;
+  --purple-pale: #F5F3FF;
+  --purple-mid:  #8B5CF6;
+  --gold:        #F6C90E;
+  --green:       #059669;
+  --green-bg:    #ECFDF5;
+  --red:         #DC2626;
+  --white:       #FFFFFF;
+  --bg:          #FAFAF9;
+  --text:        #1C1033;
+  --text-soft:   #7C6FAF;
+  --border:      rgba(124,58,237,0.15);
+}
+
+html, body { height: 100%; font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+body { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── TEACHER AREA ── */
+.teacher-area {
+  background: linear-gradient(160deg, var(--purple-dark), var(--purple));
+  padding: 16px 16px 24px;
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+.teacher-area::after {
+  content: ''; position: absolute; width: 200px; height: 200px;
+  background: rgba(255,255,255,0.05); border-radius: 50%;
+  top: -60px; right: -40px; pointer-events: none;
+}
+.teacher-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.live-badge {
+  background: rgba(246,201,14,0.2); color: var(--gold);
+  border: 1px solid rgba(246,201,14,0.4); border-radius: 20px;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 10px;
+  animation: badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.teacher-name { font-size: 20px; font-weight: 800; color: #fff; }
+.teacher-sub  { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 600; }
+
+/* Avatar */
+.avatar-wrap { display: flex; flex-direction: column; align-items: center; position: relative; margin: 0 auto 12px; width: 120px; }
+.ring { position: absolute; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18); top: 50%; left: 50%; transform: translate(-50%,-55%); pointer-events: none; }
+.ring-o { width: 118px; height: 118px; }
+.ring-i { width: 100px; height: 100px; border-color: rgba(255,255,255,0.1); }
+.ring-o.talking, .ring-i.talking { animation: ringTalk 0.8s ease-in-out infinite; border-color: rgba(246,201,14,0.6); }
+.ring-o.listening, .ring-i.listening { animation: ringTalk 1s ease-in-out infinite; border-color: rgba(52,211,153,0.7); }
+@keyframes ringTalk { 0%,100%{transform:translate(-50%,-55%) scale(1)} 50%{transform:translate(-50%,-55%) scale(1.07)} }
+
+.avatar-face {
+  width: 90px; height: 90px; border-radius: 50%; background: #fff;
+  overflow: hidden; position: relative; z-index: 2;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+}
+.avatar-face svg { width: 100%; height: 100%; }
+#eyeL, #eyeR { transform-origin: center; animation: blink 4s ease-in-out infinite; }
+#eyeR { animation-delay: 0.05s; }
+@keyframes blink { 0%,93%,100%{transform:scaleY(1)} 95%{transform:scaleY(0.05)} }
+
+.status-row { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.status-dot.listening { background: #34D399; animation: dotPulse 0.8s infinite; }
+.status-dot.talking   { background: var(--gold); animation: dotPulse 0.5s infinite; }
+.status-dot.thinking  { background: #A78BFA; animation: dotPulse 1.2s infinite; }
+@keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
+.status-txt { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); }
+
+.topic-pill {
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px; padding: 7px 12px; display: flex; align-items: center; gap: 8px;
+}
+.topic-ch  { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gold); white-space: nowrap; }
+.topic-txt { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); }
+
+/* ── BOARD AREA ── */
+.board-area { flex: 1; padding: 12px 12px 6px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+
+/* Classroom chalkboard */
+.chalkboard {
+  background: #1a3a2a; border-radius: 14px;
+  border: 3px solid #2d5a3d; padding: 14px 16px 18px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.03);
+  min-height: 160px;
+}
+.board-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.board-line { flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
+.board-title-txt { font-size: 12px; font-family: 'Kalam', cursive; color: rgba(255,255,255,0.4); white-space: nowrap; }
+.board-steps { display: flex; flex-direction: column; gap: 9px; }
+
+/* Step types */
+.step { opacity: 0; transform: translateY(5px); transition: opacity 0.4s ease, transform 0.4s ease; }
+.step.show { opacity: 1; transform: translateY(0); }
+.step-text  { font-family: 'Kalam', cursive; font-size: 15px; color: rgba(255,255,255,0.9); line-height: 1.65; }
+.step-def   { background: rgba(104,211,145,0.1); border-left: 3px solid #68D391; border-radius: 0 8px 8px 0; padding: 7px 11px; }
+.step-def .lbl { font-size: 9px; font-family: 'Nunito', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #68D391; display: block; margin-bottom: 3px; }
+.step-def .val { font-family: 'Kalam', cursive; font-size: 14px; color: #9AE6B4; line-height: 1.5; }
+.step-formula { background: rgba(246,201,14,0.08); border: 1px solid rgba(246,201,14,0.22); border-radius: 9px; padding: 9px 12px; text-align: center; }
+.step-formula .lbl { font-size: 9px; font-family: 'Nunito', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(246,201,14,0.55); display: block; margin-bottom: 4px; }
+.step-formula .val { font-family: 'Kalam', cursive; font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: 0.05em; }
+.step-eq { background: rgba(99,179,237,0.08); border: 1px solid rgba(99,179,237,0.2); border-radius: 9px; padding: 9px 12px; text-align: center; }
+.step-eq .lbl { font-size: 9px; font-family: 'Nunito', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(99,179,237,0.55); display: block; margin-bottom: 4px; }
+.step-eq .val { font-family: 'Kalam', cursive; font-size: 17px; color: #90CDF4; letter-spacing: 0.06em; }
+.step-eg { padding: 5px 0 5px 11px; border-left: 2px solid rgba(255,255,255,0.15); }
+.step-eg .lbl { font-size: 9px; font-family: 'Nunito', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); display: block; margin-bottom: 2px; }
+.step-eg .val { font-family: 'Kalam', cursive; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+.step-q { background: rgba(159,122,234,0.12); border: 1px solid rgba(159,122,234,0.28); border-radius: 9px; padding: 9px 12px; }
+.step-q .lbl { font-size: 9px; font-family: 'Nunito', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #B794F4; display: block; margin-bottom: 3px; }
+.step-q .val { font-family: 'Kalam', cursive; font-size: 14px; color: #D6BCFA; line-height: 1.5; }
+.step-bullets { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.step-bullets li { display: flex; gap: 7px; font-family: 'Kalam', cursive; font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.4; }
+.step-bullets li::before { content: '→'; color: rgba(255,255,255,0.3); flex-shrink: 0; }
+.step-enc { font-family: 'Kalam', cursive; font-size: 14px; color: #68D391; padding: 3px 0; }
+.kw { background: rgba(246,201,14,0.15); color: var(--gold); border-radius: 3px; padding: 0 3px; font-weight: 700; }
+
+/* Chalk cursor */
+.chalk-cursor { display: flex; align-items: center; gap: 7px; margin-top: 10px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.06); }
+.chalk-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); animation: cdot 0.9s step-end infinite; }
+@keyframes cdot { 0%,100%{opacity:1} 50%{opacity:0} }
+.chalk-txt { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3); }
+
+/* Key points card */
+.card { background: var(--white); border-radius: 14px; border: 1px solid var(--border); padding: 12px 14px; box-shadow: 0 2px 10px rgba(124,58,237,0.05); }
+.card-ey { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-soft); margin-bottom: 9px; }
+.ey-dot { width: 6px; height: 6px; border-radius: 50%; }
+.ey-gold { background: #F59E0B; }
+.ey-green{ background: var(--green); }
+.pts-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.pt-item { display: flex; align-items: flex-start; gap: 8px; background: #FFFBEB; border-radius: 8px; border-left: 3px solid #F59E0B; padding: 7px 9px; }
+.pt-chk { color: #F59E0B; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+.pt-txt { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.4; }
+.save-btn { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 2px 7px; font-size: 10px; font-weight: 800; color: var(--purple); cursor: pointer; white-space: nowrap; font-family: 'Nunito', sans-serif; }
+.save-btn:hover { background: var(--purple-pale); }
+.save-btn.saved { background: var(--green-bg); color: var(--green); border-color: rgba(5,150,105,0.2); }
+.notes-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.note-item { display: flex; gap: 7px; font-size: 12px; font-weight: 600; color: #065F46; padding: 5px 7px; background: var(--green-bg); border-radius: 7px; }
+
+/* ── CONTROLS ── */
+.controls { padding: 10px 12px 20px; background: var(--white); border-top: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 9px; flex-shrink: 0; }
+.ctrl-row { display: flex; gap: 7px; width: 100%; justify-content: center; }
+.ctrl-btn { display: flex; align-items: center; gap: 4px; padding: 6px 11px; border-radius: 18px; border: 1.5px solid var(--border); background: var(--purple-pale); color: var(--purple); font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+.ctrl-btn svg { width: 14px; height: 14px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ctrl-btn:hover, .ctrl-btn.active { background: #EDE9FE; }
+
+/* Mic button */
+.mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.mic-btn { width: 68px; height: 68px; border-radius: 50%; background: var(--purple); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(124,58,237,0.4); transition: background 0.2s, transform 0.1s; }
+.mic-btn:hover { background: var(--purple-dark); transform: scale(1.05); }
+.mic-btn:active { transform: scale(0.95); }
+.mic-btn.on { background: var(--red); box-shadow: 0 4px 18px rgba(220,38,38,0.4); animation: micPulse 1.2s ease-in-out infinite; }
+@keyframes micPulse { 0%,100%{box-shadow:0 4px 18px rgba(220,38,38,0.4)} 50%{box-shadow:0 4px 28px rgba(220,38,38,0.7),0 0 0 8px rgba(220,38,38,0.08)} }
+.mic-btn svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mic-hint { font-size: 11px; font-weight: 700; color: var(--text-soft); }
+
+.waveform { display: flex; align-items: center; gap: 3px; height: 24px; }
+.wb { width: 4px; border-radius: 2px; background: var(--purple); animation: wave 0.7s ease-in-out infinite; }
+.wb:nth-child(2){animation-delay:.1s} .wb:nth-child(3){animation-delay:.2s} .wb:nth-child(4){animation-delay:.3s} .wb:nth-child(5){animation-delay:.4s}
+@keyframes wave { 0%,100%{height:6px;opacity:0.4} 50%{height:22px;opacity:1} }
+
+/* Toast */
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #065F46; color: #fff; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 99; animation: toastIn 0.2s ease; }
+@keyframes toastIn { from{transform:translateX(-50%) translateY(8px);opacity:0} to{transform:translateX(-50%) translateY(0);opacity:1} }
+
+@media(min-width:480px){ body{background:#E8E0F5} .teacher-area,.board-area,.controls{max-width:480px;margin:0 auto;width:100%} }
+</style>
+</head>
+<body>
+
+<!-- TEACHER TOP -->
+<section class="teacher-area">
+  <div class="teacher-top">
+    <div class="live-badge">Live Class</div>
+    <span class="teacher-name">Priya Ma'am</span>
+    <span class="teacher-sub">Physics · Chemistry · Maths</span>
+  </div>
+
+  <div class="avatar-wrap">
+    <div class="ring ring-o" id="ringO"></div>
+    <div class="ring ring-i" id="ringI"></div>
+    <div class="avatar-face">
+      <svg viewBox="0 0 120 120">
+        <ellipse cx="60" cy="108" rx="36" ry="22" fill="#7C3AED"/>
+        <ellipse cx="60" cy="90"  rx="26" ry="20" fill="#8B5CF6"/>
+        <rect x="54" y="68" width="12" height="14" rx="4" fill="#F5CBA7"/>
+        <circle cx="60" cy="58" r="24" fill="#F5CBA7"/>
+        <ellipse cx="60" cy="40" rx="22" ry="12" fill="#1a0a00"/>
+        <ellipse cx="60" cy="36" rx="20" ry="10" fill="#2d1200"/>
+        <circle cx="60" cy="46" r="2.5" fill="#E53E3E"/>
+        <ellipse cx="52" cy="56" rx="4" ry="4.5" fill="white"/>
+        <ellipse cx="68" cy="56" rx="4" ry="4.5" fill="white"/>
+        <circle cx="52" cy="57" r="2.5" fill="#1a0a00" id="eyeL"/>
+        <circle cx="68" cy="57" r="2.5" fill="#1a0a00" id="eyeR"/>
+        <circle cx="53" cy="56" r="0.8" fill="white"/>
+        <circle cx="69" cy="56" r="0.8" fill="white"/>
+        <path d="M47 50 Q52 47 57 50" stroke="#1a0a00" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M63 50 Q68 47 73 50" stroke="#1a0a00" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="60" cy="62" rx="2" ry="1.5" fill="#e8b48a"/>
+        <path d="M54 68 Q60 73 66 68" stroke="#c0392b" stroke-width="2" fill="none" stroke-linecap="round" id="mouth"/>
+        <circle cx="36" cy="58" r="3" fill="#F6C90E"/>
+        <circle cx="84" cy="58" r="3" fill="#F6C90E"/>
+        <path d="M34 78 Q60 72 86 78" stroke="#A78BFA" stroke-width="4" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="status-row">
+      <span class="status-dot" id="sDot"></span>
+      <span class="status-txt" id="sTxt">Ready to teach</span>
+    </div>
+  </div>
+
+  <div class="topic-pill">
+    <span class="topic-ch" id="topicCh">LiveClass</span>
+    <span class="topic-txt" id="topicTxt">Welcome! Press mic to begin.</span>
+  </div>
+</section>
+
+<!-- BOARD -->
+<section class="board-area">
+  <div class="chalkboard">
+    <div class="board-head">
+      <div class="board-line"></div>
+      <span class="board-title-txt" id="boardTitle">Classroom Board</span>
+      <div class="board-line"></div>
+    </div>
+    <div class="board-steps" id="boardSteps">
+      <div class="step show">
+        <p class="step-text">Namaste! Priya Ma'am yahan hoon. Mic dabao aur batao — kaunsa chapter padhna hai aaj? 🙏</p>
+      </div>
+    </div>
+    <div class="chalk-cursor" id="chalkCursor" style="display:none">
+      <span class="chalk-dot"></span>
+      <span class="chalk-txt">Priya Ma'am likh rahi hain...</span>
+    </div>
+  </div>
+
+  <div class="card" id="ptsCard" style="display:none">
+    <div class="card-ey"><span class="ey-dot ey-gold"></span>Key Points to Remember</div>
+    <ul class="pts-list" id="ptsList"></ul>
+  </div>
+
+  <div class="card" id="notesCard" style="display:none">
+    <div class="card-ey"><span class="ey-dot ey-green"></span>My Notes (<span id="notesCount">0</span>)</div>
+    <ul class="notes-list" id="notesList"></ul>
+  </div>
+</section>
+
+<!-- CONTROLS -->
+<section class="controls">
+  <div class="ctrl-row">
+    <button class="ctrl-btn" id="handBtn" onclick="raiseHand()">
+      <svg viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M6 14v1a6 6 0 0 0 12 0v-3"/></svg>
+      Raise Hand
+    </button>
+    <button class="ctrl-btn" onclick="repeatLast()">
+      <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.2"/></svg>
+      Repeat
+    </button>
+    <button class="ctrl-btn" id="notesBtn" onclick="toggleNotes()">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Notes
+    </button>
+  </div>
+
+  <div class="mic-wrap">
+    <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+      <svg id="micIcon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      <svg id="stopIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+    </button>
+    <p class="mic-hint" id="micHint">Tap to speak</p>
+  </div>
+
+  <div class="waveform" id="waveform" style="display:none">
+    <div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div>
+  </div>
+</section>
+
+<div class="toast" id="toast" style="display:none">✓ Saved to Notes</div>
+
+<script src="app.js"></script>
+</body>
+</html>

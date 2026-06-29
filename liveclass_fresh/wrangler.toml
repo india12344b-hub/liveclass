@@ -1,0 +1,8 @@
+name = "liveclass"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "public"
+
+# GEMINI_API_KEY → set once in CF Dashboard:
+# Workers & Pages → liveclass → Settings → Environment Variables
+# Name: GEMINI_API_KEY | Value: AIza... | Type: Secret (Encrypt)
+# Then: Deployments → Retry deployment
